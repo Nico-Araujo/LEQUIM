@@ -8,20 +8,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root{
-  --bg:#f5f7f6; --surface:#ffffff; --ink:#152023; --muted:#5b6b6d;
-  --line:#dbe3e1; --accent:#0f6d66; --accent-ink:#ffffff; --mono-bg:#eef3f2;
+  /* Paleta: Deep Twilight, French Blue, Bright Teal Blue, Blue Green,
+     Turquoise Surf, Sky Aqua, Frosted Blue, Frosted Blue (claro), Light Cyan */
+  --c-deep:#03045E; --c-french:#023E8A; --c-teal:#0077B6; --c-bluegreen:#0096C7;
+  --c-turquoise:#00B4D8; --c-skyaqua:#48CAE4; --c-frosted1:#90E0EF;
+  --c-frosted2:#ADE8F4; --c-lightcyan:#CAF0F8;
+
+  --bg:var(--c-lightcyan); --surface:#ffffff; --ink:var(--c-deep); --muted:var(--c-teal);
+  --line:rgba(2,62,138,.18); --accent:var(--c-turquoise); --accent-ink:var(--c-deep);
+  --mono-bg:rgba(0,180,216,.10);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0f1517; --surface:#161e20; --ink:#e7eeec; --muted:#93a3a3;
-    --line:#2a3538; --accent:#3fb8ac; --accent-ink:#06201d; --mono-bg:#1c2628;
+    --bg:var(--c-deep); --surface:var(--c-french); --ink:var(--c-lightcyan); --muted:var(--c-frosted1);
+    --line:rgba(202,240,248,.16); --accent:var(--c-turquoise); --accent-ink:var(--c-deep);
+    --mono-bg:rgba(72,202,228,.14);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0f1517; --surface:#161e20; --ink:#e7eeec; --muted:#93a3a3;
-  --line:#2a3538; --accent:#3fb8ac; --accent-ink:#06201d; --mono-bg:#1c2628;
+  --bg:var(--c-deep); --surface:var(--c-french); --ink:var(--c-lightcyan); --muted:var(--c-frosted1);
+  --line:rgba(202,240,248,.16); --accent:var(--c-turquoise); --accent-ink:var(--c-deep);
+  --mono-bg:rgba(72,202,228,.14);
 }
 *{box-sizing:border-box;}
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
@@ -30,21 +39,21 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   min-height:100%;
 }
-.wrap{max-width:1000px; margin:0 auto; padding:28px 20px 60px;}
-header{margin-bottom:22px;}
-.eyebrow{font-size:13px; color:var(--accent); font-weight:600; margin:0 0 6px;}
-h1{font-size:26px; margin:0 0 8px; letter-spacing:-0.01em;}
-.lede{color:var(--muted); font-size:14.5px; line-height:1.55; max-width:66ch; margin:0;}
+.wrap{max-width:1000px; margin:0 auto; padding:clamp(18px,4vw,28px) clamp(14px,4vw,20px) 60px;}
+header{margin-bottom:clamp(16px,3vw,22px);}
+.eyebrow{font-size:13px; color:var(--muted); font-weight:600; margin:0 0 6px;}
+h1{font-size:clamp(21px,4.5vw,27px); margin:0 0 8px; letter-spacing:-0.01em;}
+.lede{color:var(--muted); font-size:clamp(13.5px,3vw,14.5px); line-height:1.55; max-width:66ch; margin:0;}
 .controls{
-  display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 6px;
+  display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 6px;
   position:sticky; top:0; padding:10px 0; background:var(--bg); z-index:2;
 }
 input[type="search"], select{
-  font:inherit; font-size:15px; padding:10px 12px; border-radius:8px;
+  font:inherit; font-size:16px; padding:11px 12px; border-radius:8px;
   border:1px solid var(--line); background:var(--surface); color:var(--ink);
 }
 input[type="search"]{flex:1 1 240px; min-width:0;}
-select{flex:0 1 220px;}
+select{flex:1 1 180px; min-width:0;}
 input[type="search"]:focus, select:focus{outline:2px solid var(--accent); outline-offset:1px;}
 .count{color:var(--muted); font-size:13px; margin:4px 0 14px;}
 .tablewrap{
@@ -103,9 +112,22 @@ tbody tr{cursor:pointer;}
 .p-value.missing{color:var(--muted); font-style:italic;}
 footer{margin-top:18px; color:var(--muted); font-size:12.5px; line-height:1.6;}
 footer code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:var(--mono-bg); padding:1px 5px; border-radius:4px;}
-@media (max-width:560px){
-  h1{font-size:22px;}
-  select{flex:1 1 100%;}
+.src-dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+.p-link{
+  display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600;
+  color:var(--accent-ink); background:var(--accent); padding:8px 14px; border-radius:8px;
+  text-decoration:none; margin-top:4px;
+}
+.p-link:hover{opacity:.88;}
+.p-link.secondary{background:var(--mono-bg); color:var(--ink);}
+@media (max-width:640px){
+  .controls{flex-direction:column; align-items:stretch;}
+  input[type="search"], select{flex:1 1 auto; width:100%;}
+  .tablewrap{max-height:68vh;}
+  table{min-width:0;}
+  thead th:first-child, tbody td.mol{display:none;}
+  tbody td{padding:10px 8px; font-size:12.5px;}
+  .panel{width:100%;}
 }
 </style>
 </head>
@@ -114,7 +136,7 @@ footer code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; ba
   <header>
     <p class="eyebrow">LEQUIM · Reagentário</p>
     <h1>Catálogo de reagentes</h1>
-    <p class="lede">Protótipo com 130 registros reais, extraídos da tabela db_HTML (aba "Base de dados - HTML"). Busque, filtre por localização ou categoria, e clique num reagente pra ver os detalhes.</p>
+    <p class="lede">Busque, filtre por localização ou categoria, e clique num reagente pra ver os detalhes.</p>
   </header>
 
   <div class="banner" id="banner" hidden></div>
@@ -156,7 +178,7 @@ footer code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; ba
 //    escolha essa aba > formato CSV > Publicar.
 //    Enquanto estiver vazio, a página usa os dados de exemplo abaixo.
 // ============================================================
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSfzpr8BAA8kJb2YS8P79KCAibz63plcLW_Hr_IpPsw3k_2kipac2qxbzGl8SNQOqefr6go8wOFF4jY/pub?gid=889952977&single=true&output=csv";
+const CSV_URL = "";
 
 // Cada campo aceita vários nomes de coluna possíveis (em pt ou en, com ou sem
 // espaço/acento — normKey() já ignora isso). Adicione um alias aqui se sua
@@ -179,9 +201,11 @@ const EXPECTED = Object.keys(ALIASES);
 const SOURCE_ALIASES = ["source","origem","aba"];
 const CAT2_ALIASES = ["category2","subcategoria","grupofuncional"];
 const LOCDETAIL_ALIASES = ["location","local","posicao","detalhelocalizacao"];
+// FISPQ/SDS: link real, se a planilha tiver um preenchido pra esse reagente.
+const FISPQ_ALIASES = ["fispq","sds","fispqsds","fichadeseguranca"];
 
 // Dados de exemplo (amostra real da planilha original) usados como fallback.
-let DATA = [["1-Octanesulfonic acid sodium salt","5324-84-5","C8H17O3SNa",216.27,"Anionic surfactant","Sulfonic acid (sal de ácido sulfonico)","","","Padrões",""],["Acetaminophen","103-90-2","CH3CONHC6H4OH",151.16,"Aromatic amide (Amida aromática)","Fenol, amida","100g","Sigma Aldrich","Padrões",""],["Acid Orange 31 (250 mg, Sigma)","5858-89-9","C16H10ClN2NaO4S",384.78,"Azo dye","Azo,fenol, aromático, sulfonato de sódio, haleto","250mg","Sigma Aldrich","Padrões",""],["Acid red 114 (50 g, Sigma)","6459-94-5","C37H28N4Na2O10S3",830.31,"Azo dye","Azo, sulfonato de sódio,fenol, éster sulfonico,","50g","Sigma Aldrich","Padrões",""],["Acid Red 4 (1 g, Sigma)","5858-39-9","C17H13N2NaO5S",380.36,"Azo dye","Azo, sulfonato de sódio, fenol, éter, anel aromático","1g","Sigma Aldrich","Padrões",""],["Ácido bifenil (2) carboxílico","947-84-2","C6H5C6H4CO2H",198.22,"Ácido carboxílico aromático","carboxila, anel Aromatico","","","Padrões",""],["Ácido hidroxi(m) benzóico","99-06-9","HOC6H4CO2H",138.12,"Ácido carboxilico","Carboxila, hidroxila (fenol)","","","Padrões",""],["Ácido metil(p) hidroxi benzóico","3006-96-0","C8H8O3",152.15,"Ácido carboxilico","Hidroxila, carboxila","","","Padrões",""],["Ácido tereftálico","100-21-0","C6H4-1,4-(CO2H)2",166.13,"Ácido carboxilico","Aromatico, 2 carboxila","","","Padrões",""],["Ácido toluico(p)","99-94-5","CH3C6H4CO2H",136.15,"Ácido carboxilico","Carboxila, metila","","","Padrões",""],["Aconitic acid (trans) (25 g, Sigma)","4023-65-8","HO2CCH2C(CO2H)=CHCO2H",174.11,"Ácido carboxilico","3 carboxilas","25g","Sigma Aldrich","Padrões",""],["Alanina (beta) (25 g, Sigma)","107-95-9","NH2CH2CH2COOH",89.09,"Aminoácido","Carboxila, amina","25g","Sigma Aldrich","Padrões",""],["Aldcarb Pestanal","116-06-03","C7H14N2O2S",190.26,"Carbamato","sulfeto, oxima","100mg","Sigma Aldrich","Padrões","Armário de padrões"],["Allylanisole (4) 100 g, Sigma)","140-67-0","H2C=CHCH2C6H4OCH3",148.2,"Phenylpropanoid (fenilpropanóide)","","100g","Sigma Aldrich","Padrões",""],["Allura red AC (vermelho 40) (100 g, Aldrich)","25956-17-6","C18H14N2Na2O8S2",496.42,"Azo dye (azocorante)","","100g","Sigma Aldrich","Padrões",""],["Amaranth (25 g, Sigma)","915-67-3","C20H11N2Na3O10S3",604.47,"Azo dye (azocorante)","","25g","Sigma Aldrich","Padrões",""],["Amcinonide (1 g, Fluka)","51022-69-6","C28H35FO7",502.57,"Esteroide fluorato","ester, hidroxila, grupo spirocetal","1g","Fluka (Sigma Aldrich)","Padrões",""],["Aminohippuric acid (p) (10 g, Sigma)","61-78-9","NH2C6H4C(O)NHCH2COOH",194.19,"Ácido carboxilico","Amina primária, aromático","10g","Fluka(Sigma Aldrich)","Padrões",""],["Ammonium sulfamate (100 g, Fluka)","7773-06-0","NH4SO3NH2",114.12,"Sal de amônio, inorgânico)","","100g","Fluka(Sigma Aldrich)","Padrões",""],["Anethole (trans) (25 mL, combustível, Sigma)","4180-23-8","CH3CH=CHC6H4OCH3",148.2,"Phenylpropnanoid (fenilpropanóide), anisole(anisol)","","25mL","Sigma Aldrich","Padrões",""],["Anisic (p) acid (5 g, Sigma)","0100-09-04","CH3OC6H4CO2H","","Aromatic carboxylic acid (ácido carboxílico aromático)","","5g","Sigma Aldrich","Padrões",""],["Antraceno (vial pequeno)","0120-12-7","C14H10",178.23,"Polycyclic aromatic hydrocarbon (hidrocarboneto aromático policíclico)","","","","Padrões",""],["Asiaticoside (5 mL, Fluka)","16830-15-2","C48H78O19",959.12,"Pentacyclic triterpenoid (triterpenóide pentacíclico)","","5mL","Fluka(Sigma Aldrich)","Padrões",""],["Aspartic acid (D) (25 g, Sigma)","1783-96-6","HO2CCH2CH(NH2)CO2H",133.1,"Amino acid (aminoácido)","","25g","Sigma Aldrich","Padrões",""],["Atropin sulfate (200 mg, Boehringer Ingelheim)","5908-99-6","(C17H23NO3)2 · H2SO4 · H2O",694.83,"Alcaloide (sal de sulfato)","Éster, álccol, amina terciária, éter","200mg","","Padrões",""],["Atropine (1 g, Sigma-Aldrich)","51-55-8","C17H23NO3",289.37,"Tropane alkaloid (alcaloide)","","1g","Sigma Aldrich","Padrões",""],["Azelaic acid (Sigma, 100 mg)","123-99-9","HO2C(CH2)7CO2H",188.22,"Acido caboxilico","","100mg","Sigma Aldrich","Padrões",""],["Azino (2,2') bis ethyl (3) benzothiazoline sulfonic acid (6) diammonium salt (ABTS) (1 g, Sigma)","30931-67-0","C18H24N6O6S4",548.68,"Sal de diamônio","","1g","Sigma Aldrich","Padrões",""],["Azithromycin (25 mg, Sigma)","#VALUE!","C38H72N2O12",748.98,"Macrolídeo","Éster cíclico, amina terciária, álcool, éter","25mg","Sigma Aldrich","Padrões",""],["Baclofen (+/-) (500 mg, Sigma)","63701-55-3","C10H12ClNO2 . HCl",250.12,"Acido caboxilico","Amida primária, haleto organico","500mg","Sigma Aldrich","Padrões",""],["Bezafibrafe (5 g, Sigma)","41859-67-0","C19H20ClNO4",361.82,"Fibrate (fibrato)","Ácido carboxílico, amida aromática, éter aromático, haleto","5g","Sigma Aldrich","Padrões",""],["Bifenil(4) carboxílico","92-92-2","C6H5C6H4CO2H",198.22,"Ácido carboxílico","Aromático","","","Padrões",""],["BIS-TRIS (25 g, Sigma)","6976-37-0","C8H19NO5",209.24,"Amina terciária","Álcool","25g","Sigma Aldrich","Padrões",""],["Bisabolol (alpha) (25 mL, Fluka)","515-69-5","C15H26O","","Sesquiterpene alcohol ( álcool sesquiterpênico)","","25mL","Fluka (Sigma Aldrich)","Padrões",""],["Bismut (III) gallate basic hydrate (subgalato) (100 g, Sigma)","99-26-3","C7H5BiO6 · xH2O","","Organometálico (sal orgânico)","Ácido carboxílico, fenol, aromático","100g","Sigma Aldrich","Padrões",""],["Borneol (100 g, Sigma)","507-70-0","C10H18O",154.3,"Bicyclic monoterpenoid (monoterpenoide bicíclico)","","100g","Sigma Aldrich","Padrões",""],["Bromo (3) - methylbenzoic (4) acid (5 g, Sigma)","7697-26-9","BrC6H3(CH3)CO2H",215.04,"Carboxylic acid/ aryl halide/ aromatic alkyl","","5g","Sigma Aldrich","Padrões",""],["Bromobenzoic (4) acid (10 g, Sigma)","586-76-5","BrC6H4CO2H",201.02,"Carboxylic acid/ aryl halide/ aromatic","","10g","Sigma Aldrich","Padrões",""],["Bromoterephthalic (2) acid (5 g, Sigma)","586-35-6","BrC6H3-1,4-(CO2H)2",245.03,"Carboxylic acid/ aryl halide/ aromatic","","5g","Sigma Aldrich","Padrões",""],["Bronopol (25 g, TheBoots Company)","52-51-7","HOCH2C(Br)(NO2)CH2OH",199.99,"Halohydrin/ nitro compound","","25g","","Padrões",""],["Ammonium acetate - 4 frascos","","","","","","","","A",""],["Calcium acetate","","","","","","","","A",""],["Sodium acetate - 4 frascos","","","","","","","","A",""],["Sodium benzoate - 2 frascos","","","","","","","","A",""],["Sodium bicarbonate - 2 frascos","","","","","","","","A",""],["Sodium bisulfite - 5 frascos","","","","","","","","A",""],["Potassium bromide","","","","","","","","A",""],["Ammonium carbonate - 2 frascos","","","","","","","","A",""],["Barium carbonate","","","","","","","","A",""],["Calcium carbonate","","","","","","","","A",""],["Sodium carbonate - 3 frascos","","","","","","","","A",""],["Ammonium Chloride","","","","","","","","A",""],["Barium chloride","","","","","","","","A",""],["Calcium chloride - 3 frascos","","","","","","","","A",""],["Cesium chloride","","","","","","","","A",""],["Cromium (III) chloride","","","","","","","","A",""],["Iron (II) chloride","","","","","","","","A",""],["Iron (III) chloride - 2 frascos","","","","","","","","A",""],["Acetylsalicilic acid - 2 frascos","","","","","","","","B",""],["Adipic acid","","","","","","","","B",""],["Aminobenzoic acid","","","","","","","","B",""],["Ascorbic acid","","","","","","","","B",""],["Aspartic acid - 3 frascos","","","","","","","","B",""],["Benzoic acid - 2 frascos","","","","","","","","B",""],["Boric acid - 2 frascos","","","","","","","","B",""],["Bromo (11) decanoic acid","","","","","","","","B",""],["Citric acid - 6 frascos","","","","","","","","B",""],["Cholic acid","","","","","","","","B",""],["Dihidroxybenzoic (3,5) acid","","","","","","","","B",""],["Dinitrobenzoic (3,5) acid - 2 frascos","","","","","","","","B",""],["Stearic acid","","","","","","","","B",""],["Fumaric acid - 2 frascos","","","","","","","","B",""],["Gallic acid (3,4,5-Trihydroxybenzoic acid)","","","","","","","","B",""],["Glycolic acid","","","","","","","","B",""],["Glutamic acid","","","","","","","","B",""],["Glutamic (L) acid","","","","","","","","B",""],["Phenol","","","","","","","","C",""],["Potassium ferricyanide","","","","","","","","C",""],["Sodium fluorescein","","","","","","","","C",""],["Methionine acetic","","","","","","","","C",""],["Cholic acid","","","","","","","","C",""],["Hydroxyethylcellulose","","","","","","","","C",""],["Basic Fuchsin","","","","","","","","C",""],["Galactose (D-)","","","","","","","","C",""],["Genapol","","","","","","","","C",""],["Caffeine","","","","","","","","C",""],["Glycylglycine (Gly-Gly)","","","","","","","","C",""],["Glycine","","","","","","","","C",""],["Glucose","","","","","","","","C",""],["Glucone delta lactone","","","","","","","","C",""],["Terephthalic acid (purified)","","","","","","","","C",""],["Allantoin","","","","","","","","C",""],["Aloin","","","","","","","","C",""],["Hexamethonium bromide hydrate","","","","","","","","C",""],["Isobutanol (1 L, Vetec, 1 L, Fluka) 3 frascos","","","","","","","","D",""],["Butanol normal (1 L, Millinckrodt)","","","","","","","","D",""],["Isopropanol (1L, Synth, Reagen) 8 frascos","","","","","","","","D",""],["Propanol (n) / 1-Propanol (1 L, Synth)","","","","","","","","D",""],["Dodecyl alcohol (100 mL)","","","","","","","","D",""],["Cyclohexanol (frasco com nome Fernando)","","","","","","","","D",""],["Decanol (2) (50 mL)","","","","","","","","D",""],["Octanol (1) (250 mL, 1 L, Merck) 2 frascos","","","","","","","","D",""],["Butyl acetate (1 L, Anydrol)","","","","","","","","D",""],["Ethyl acetate ( 1L, Synth) 2 frascos","","","","","","","","D",""],["Acetylacetone (1 L, Merck) 2 frascos","","","","","","","","D",""],["N-Amyl propanol (500 mL)","","","","","","","","D",""],["Benzene (1L, Merck, 1 L, Sigma) 2 frascos","","","","","","","","D",""],["Butyleneglycol (1,3) (1 L, Braschim) 2 frascos","","","","","","","","D",""],["Butyraldehyde (1 L, Fluka)","","","","","","","","D",""],["Cyclohexane (500 mL, Merck)","","","","","","","","D",""],["Dimethylsulfoxide (DMSO) (1 L x 2, Synth, 1 L, QM) 5 frascos","","","","","","","","D",""],["Carbon sulfide (1 L, Merck) 2 frascos","","","","","","","","D",""],["D-Galactose (100 g, Aldrich)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Açúcares"],["Carbofuran (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Acephate (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Aldicarb (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Aldicarb-sulfone (100 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Aldrin (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Ametryn (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Azinphos methyl (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Carbaryl (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["DDE (4,4') (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Diazinon (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Dicofol (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Dimethoate (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Diuron (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Endosulfan (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Endrin ((250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Ethion (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"],["Linuron (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas"]];
+let DATA = [["1-Octanesulfonic acid sodium salt","5324-84-5","C8H17O3SNa",216.27,"Anionic surfactant","Sulfonic acid (sal de ácido sulfonico)","","","Padrões","",""],["Acetaminophen","103-90-2","CH3CONHC6H4OH",151.16,"Aromatic amide (Amida aromática)","Fenol, amida","100g","Sigma Aldrich","Padrões","",""],["Acid Orange 31 (250 mg, Sigma)","5858-89-9","C16H10ClN2NaO4S",384.78,"Azo dye","Azo,fenol, aromático, sulfonato de sódio, haleto","250mg","Sigma Aldrich","Padrões","",""],["Acid red 114 (50 g, Sigma)","6459-94-5","C37H28N4Na2O10S3",830.31,"Azo dye","Azo, sulfonato de sódio,fenol, éster sulfonico,","50g","Sigma Aldrich","Padrões","",""],["Acid Red 4 (1 g, Sigma)","5858-39-9","C17H13N2NaO5S",380.36,"Azo dye","Azo, sulfonato de sódio, fenol, éter, anel aromático","1g","Sigma Aldrich","Padrões","",""],["Ácido bifenil (2) carboxílico","947-84-2","C6H5C6H4CO2H",198.22,"Ácido carboxílico aromático","carboxila, anel Aromatico","","","Padrões","",""],["Ácido hidroxi(m) benzóico","99-06-9","HOC6H4CO2H",138.12,"Ácido carboxilico","Carboxila, hidroxila (fenol)","","","Padrões","",""],["Ácido metil(p) hidroxi benzóico","3006-96-0","C8H8O3",152.15,"Ácido carboxilico","Hidroxila, carboxila","","","Padrões","",""],["Ácido tereftálico","100-21-0","C6H4-1,4-(CO2H)2",166.13,"Ácido carboxilico","Aromatico, 2 carboxila","","","Padrões","",""],["Ácido toluico(p)","99-94-5","CH3C6H4CO2H",136.15,"Ácido carboxilico","Carboxila, metila","","","Padrões","",""],["Aconitic acid (trans) (25 g, Sigma)","4023-65-8","HO2CCH2C(CO2H)=CHCO2H",174.11,"Ácido carboxilico","3 carboxilas","25g","Sigma Aldrich","Padrões","",""],["Alanina (beta) (25 g, Sigma)","107-95-9","NH2CH2CH2COOH",89.09,"Aminoácido","Carboxila, amina","25g","Sigma Aldrich","Padrões","",""],["Aldcarb Pestanal","116-06-03","C7H14N2O2S",190.26,"Carbamato","sulfeto, oxima","100mg","Sigma Aldrich","Padrões","Armário de padrões",""],["Allylanisole (4) 100 g, Sigma)","140-67-0","H2C=CHCH2C6H4OCH3",148.2,"Phenylpropanoid (fenilpropanóide)","","100g","Sigma Aldrich","Padrões","",""],["Allura red AC (vermelho 40) (100 g, Aldrich)","25956-17-6","C18H14N2Na2O8S2",496.42,"Azo dye (azocorante)","","100g","Sigma Aldrich","Padrões","",""],["Amaranth (25 g, Sigma)","915-67-3","C20H11N2Na3O10S3",604.47,"Azo dye (azocorante)","","25g","Sigma Aldrich","Padrões","",""],["Amcinonide (1 g, Fluka)","51022-69-6","C28H35FO7",502.57,"Esteroide fluorato","ester, hidroxila, grupo spirocetal","1g","Fluka (Sigma Aldrich)","Padrões","",""],["Aminohippuric acid (p) (10 g, Sigma)","61-78-9","NH2C6H4C(O)NHCH2COOH",194.19,"Ácido carboxilico","Amina primária, aromático","10g","Fluka(Sigma Aldrich)","Padrões","",""],["Ammonium sulfamate (100 g, Fluka)","7773-06-0","NH4SO3NH2",114.12,"Sal de amônio, inorgânico)","","100g","Fluka(Sigma Aldrich)","Padrões","",""],["Anethole (trans) (25 mL, combustível, Sigma)","4180-23-8","CH3CH=CHC6H4OCH3",148.2,"Phenylpropnanoid (fenilpropanóide), anisole(anisol)","","25mL","Sigma Aldrich","Padrões","",""],["Anisic (p) acid (5 g, Sigma)","0100-09-04","CH3OC6H4CO2H","","Aromatic carboxylic acid (ácido carboxílico aromático)","","5g","Sigma Aldrich","Padrões","",""],["Antraceno (vial pequeno)","0120-12-7","C14H10",178.23,"Polycyclic aromatic hydrocarbon (hidrocarboneto aromático policíclico)","","","","Padrões","",""],["Asiaticoside (5 mL, Fluka)","16830-15-2","C48H78O19",959.12,"Pentacyclic triterpenoid (triterpenóide pentacíclico)","","5mL","Fluka(Sigma Aldrich)","Padrões","",""],["Aspartic acid (D) (25 g, Sigma)","1783-96-6","HO2CCH2CH(NH2)CO2H",133.1,"Amino acid (aminoácido)","","25g","Sigma Aldrich","Padrões","",""],["Atropin sulfate (200 mg, Boehringer Ingelheim)","5908-99-6","(C17H23NO3)2 · H2SO4 · H2O",694.83,"Alcaloide (sal de sulfato)","Éster, álccol, amina terciária, éter","200mg","","Padrões","",""],["Atropine (1 g, Sigma-Aldrich)","51-55-8","C17H23NO3",289.37,"Tropane alkaloid (alcaloide)","","1g","Sigma Aldrich","Padrões","",""],["Azelaic acid (Sigma, 100 mg)","123-99-9","HO2C(CH2)7CO2H",188.22,"Acido caboxilico","","100mg","Sigma Aldrich","Padrões","",""],["Azino (2,2') bis ethyl (3) benzothiazoline sulfonic acid (6) diammonium salt (ABTS) (1 g, Sigma)","30931-67-0","C18H24N6O6S4",548.68,"Sal de diamônio","","1g","Sigma Aldrich","Padrões","",""],["Azithromycin (25 mg, Sigma)","#VALUE!","C38H72N2O12",748.98,"Macrolídeo","Éster cíclico, amina terciária, álcool, éter","25mg","Sigma Aldrich","Padrões","",""],["Baclofen (+/-) (500 mg, Sigma)","63701-55-3","C10H12ClNO2 . HCl",250.12,"Acido caboxilico","Amida primária, haleto organico","500mg","Sigma Aldrich","Padrões","",""],["Bezafibrafe (5 g, Sigma)","41859-67-0","C19H20ClNO4",361.82,"Fibrate (fibrato)","Ácido carboxílico, amida aromática, éter aromático, haleto","5g","Sigma Aldrich","Padrões","",""],["Bifenil(4) carboxílico","92-92-2","C6H5C6H4CO2H",198.22,"Ácido carboxílico","Aromático","","","Padrões","",""],["BIS-TRIS (25 g, Sigma)","6976-37-0","C8H19NO5",209.24,"Amina terciária","Álcool","25g","Sigma Aldrich","Padrões","",""],["Bisabolol (alpha) (25 mL, Fluka)","515-69-5","C15H26O","","Sesquiterpene alcohol ( álcool sesquiterpênico)","","25mL","Fluka (Sigma Aldrich)","Padrões","",""],["Bismut (III) gallate basic hydrate (subgalato) (100 g, Sigma)","99-26-3","C7H5BiO6 · xH2O","","Organometálico (sal orgânico)","Ácido carboxílico, fenol, aromático","100g","Sigma Aldrich","Padrões","",""],["Borneol (100 g, Sigma)","507-70-0","C10H18O",154.3,"Bicyclic monoterpenoid (monoterpenoide bicíclico)","","100g","Sigma Aldrich","Padrões","",""],["Bromo (3) - methylbenzoic (4) acid (5 g, Sigma)","7697-26-9","BrC6H3(CH3)CO2H",215.04,"Carboxylic acid/ aryl halide/ aromatic alkyl","","5g","Sigma Aldrich","Padrões","",""],["Bromobenzoic (4) acid (10 g, Sigma)","586-76-5","BrC6H4CO2H",201.02,"Carboxylic acid/ aryl halide/ aromatic","","10g","Sigma Aldrich","Padrões","",""],["Bromoterephthalic (2) acid (5 g, Sigma)","586-35-6","BrC6H3-1,4-(CO2H)2",245.03,"Carboxylic acid/ aryl halide/ aromatic","","5g","Sigma Aldrich","Padrões","",""],["Bronopol (25 g, TheBoots Company)","52-51-7","HOCH2C(Br)(NO2)CH2OH",199.99,"Halohydrin/ nitro compound","","25g","","Padrões","",""],["Ammonium acetate - 4 frascos","","","","","","","","A","",""],["Calcium acetate","","","","","","","","A","",""],["Sodium acetate - 4 frascos","","","","","","","","A","",""],["Sodium benzoate - 2 frascos","","","","","","","","A","",""],["Sodium bicarbonate - 2 frascos","","","","","","","","A","",""],["Sodium bisulfite - 5 frascos","","","","","","","","A","",""],["Potassium bromide","","","","","","","","A","",""],["Ammonium carbonate - 2 frascos","","","","","","","","A","",""],["Barium carbonate","","","","","","","","A","",""],["Calcium carbonate","","","","","","","","A","",""],["Sodium carbonate - 3 frascos","","","","","","","","A","",""],["Ammonium Chloride","","","","","","","","A","",""],["Barium chloride","","","","","","","","A","",""],["Calcium chloride - 3 frascos","","","","","","","","A","",""],["Cesium chloride","","","","","","","","A","",""],["Cromium (III) chloride","","","","","","","","A","",""],["Iron (II) chloride","","","","","","","","A","",""],["Iron (III) chloride - 2 frascos","","","","","","","","A","",""],["Acetylsalicilic acid - 2 frascos","","","","","","","","B","",""],["Adipic acid","","","","","","","","B","",""],["Aminobenzoic acid","","","","","","","","B","",""],["Ascorbic acid","","","","","","","","B","",""],["Aspartic acid - 3 frascos","","","","","","","","B","",""],["Benzoic acid - 2 frascos","","","","","","","","B","",""],["Boric acid - 2 frascos","","","","","","","","B","",""],["Bromo (11) decanoic acid","","","","","","","","B","",""],["Citric acid - 6 frascos","","","","","","","","B","",""],["Cholic acid","","","","","","","","B","",""],["Dihidroxybenzoic (3,5) acid","","","","","","","","B","",""],["Dinitrobenzoic (3,5) acid - 2 frascos","","","","","","","","B","",""],["Stearic acid","","","","","","","","B","",""],["Fumaric acid - 2 frascos","","","","","","","","B","",""],["Gallic acid (3,4,5-Trihydroxybenzoic acid)","","","","","","","","B","",""],["Glycolic acid","","","","","","","","B","",""],["Glutamic acid","","","","","","","","B","",""],["Glutamic (L) acid","","","","","","","","B","",""],["Phenol","","","","","","","","C","",""],["Potassium ferricyanide","","","","","","","","C","",""],["Sodium fluorescein","","","","","","","","C","",""],["Methionine acetic","","","","","","","","C","",""],["Cholic acid","","","","","","","","C","",""],["Hydroxyethylcellulose","","","","","","","","C","",""],["Basic Fuchsin","","","","","","","","C","",""],["Galactose (D-)","","","","","","","","C","",""],["Genapol","","","","","","","","C","",""],["Caffeine","","","","","","","","C","",""],["Glycylglycine (Gly-Gly)","","","","","","","","C","",""],["Glycine","","","","","","","","C","",""],["Glucose","","","","","","","","C","",""],["Glucone delta lactone","","","","","","","","C","",""],["Terephthalic acid (purified)","","","","","","","","C","",""],["Allantoin","","","","","","","","C","",""],["Aloin","","","","","","","","C","",""],["Hexamethonium bromide hydrate","","","","","","","","C","",""],["Isobutanol (1 L, Vetec, 1 L, Fluka) 3 frascos","","","","","","","","D","",""],["Butanol normal (1 L, Millinckrodt)","","","","","","","","D","",""],["Isopropanol (1L, Synth, Reagen) 8 frascos","","","","","","","","D","",""],["Propanol (n) / 1-Propanol (1 L, Synth)","","","","","","","","D","",""],["Dodecyl alcohol (100 mL)","","","","","","","","D","",""],["Cyclohexanol (frasco com nome Fernando)","","","","","","","","D","",""],["Decanol (2) (50 mL)","","","","","","","","D","",""],["Octanol (1) (250 mL, 1 L, Merck) 2 frascos","","","","","","","","D","",""],["Butyl acetate (1 L, Anydrol)","","","","","","","","D","",""],["Ethyl acetate ( 1L, Synth) 2 frascos","","","","","","","","D","",""],["Acetylacetone (1 L, Merck) 2 frascos","","","","","","","","D","",""],["N-Amyl propanol (500 mL)","","","","","","","","D","",""],["Benzene (1L, Merck, 1 L, Sigma) 2 frascos","","","","","","","","D","",""],["Butyleneglycol (1,3) (1 L, Braschim) 2 frascos","","","","","","","","D","",""],["Butyraldehyde (1 L, Fluka)","","","","","","","","D","",""],["Cyclohexane (500 mL, Merck)","","","","","","","","D","",""],["Dimethylsulfoxide (DMSO) (1 L x 2, Synth, 1 L, QM) 5 frascos","","","","","","","","D","",""],["Carbon sulfide (1 L, Merck) 2 frascos","","","","","","","","D","",""],["D-Galactose (100 g, Aldrich)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Açúcares",""],["Carbofuran (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Acephate (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Aldicarb (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Aldicarb-sulfone (100 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Aldrin (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Ametryn (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Azinphos methyl (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Carbaryl (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["DDE (4,4') (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Diazinon (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Dicofol (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Dimethoate (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Diuron (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Endosulfan (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Endrin ((250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Ethion (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""],["Linuron (250 mg, Riedel-de-Haën)","","","","","","","","Geladeira","Freezer D, Prateleira 3, caixa Pesticidas",""]];
 let CATS = ["Acido caboxilico","Alcaloide (sal de sulfato)","Amina terciária","Amino acid (aminoácido)","Aminoácido","Anionic surfactant","Aromatic amide (Amida aromática)","Aromatic carboxylic acid (ácido carboxílico aromático)","Azo dye","Azo dye (azocorante)","Bicyclic monoterpenoid (monoterpenoide bicíclico)","Carbamato","Carboxylic acid/ aryl halide/ aromatic","Carboxylic acid/ aryl halide/ aromatic alkyl","Esteroide fluorato","Fibrate (fibrato)","Halohydrin/ nitro compound","Macrolídeo","Organometálico (sal orgânico)","Pentacyclic triterpenoid (triterpenóide pentacíclico)","Phenylpropanoid (fenilpropanóide)","Phenylpropnanoid (fenilpropanóide), anisole(anisol)","Polycyclic aromatic hydrocarbon (hidrocarboneto aromático policíclico)","Sal de amônio, inorgânico)","Sal de diamônio","Sesquiterpene alcohol ( álcool sesquiterpênico)","Tropane alkaloid (alcaloide)","Ácido carboxilico","Ácido carboxílico","Ácido carboxílico aromático"];
 
 const catSel = document.getElementById('cat');
@@ -196,6 +220,11 @@ const bannerEl = document.getElementById('banner');
 const SOURCE_LABELS = {'A':'Armário A','B':'Armário B','C':'Armário C','D':'Armário D',
   'Geladeira':'Geladeira','EFDess':'Dessecador (EFDess)','Padrões':'Padrões (referência)'};
 const sourceLabel = v => SOURCE_LABELS[v] || v;
+// Cada localização ganha uma cor fixa da paleta, pra identificar de relance.
+const SOURCE_COLORS = {'Padrões':'#03045E','A':'#023E8A','B':'#0077B6','C':'#0096C7',
+  'D':'#00B4D8','Geladeira':'#48CAE4','EFDess':'#90E0EF'};
+const sourceColor = v => SOURCE_COLORS[v] || '#0077B6';
+const srcDot = v => v ? `<span class="src-dot" style="background:${sourceColor(v)}"></span>` : '';
 
 function normKey(s){
   return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -242,6 +271,7 @@ function loadFromCsv(url){
       const sourceField = fields.find(f => SOURCE_ALIASES.includes(f.norm));
       const cat2Field = fields.find(f => CAT2_ALIASES.includes(f.norm));
       const locDetailField = fields.find(f => LOCDETAIL_ALIASES.includes(f.norm));
+      const fispqField = fields.find(f => FISPQ_ALIASES.includes(f.norm));
       const rows = results.data
         .filter(row => row[colFor('nome')] && String(row[colFor('nome')]).trim())
         .map(row => [
@@ -255,6 +285,7 @@ function loadFromCsv(url){
           String(row[colFor('fabricante')] || '').trim(),
           sourceField ? String(row[sourceField.raw] || '').trim() : '',
           locDetailField ? String(row[locDetailField.raw] || '').trim() : '',
+          fispqField ? String(row[fispqField.raw] || '').trim() : '',
         ]);
       DATA = rows;
       CATS = [...new Set(rows.map(r => r[4]).filter(Boolean))].sort();
@@ -284,7 +315,7 @@ function render(){
     <tr data-i="${i}">
       <td class="mol">${molImg(r[1])}</td>
       <td class="name">${esc(r[0])}</td>
-      <td class="cat">${r[8] ? esc(sourceLabel(r[8])) : ''}</td>
+      <td class="cat">${srcDot(r[8])}${esc(sourceLabel(r[8]))}</td>
       <td class="cat">${esc(r[4])}</td>
       <td class="mono">${esc(r[1])}</td>
       <td>${esc(r[6])}</td>
@@ -321,12 +352,23 @@ function field(label, value, mono){
   </div>`;
 }
 
+function fispqLink(r){
+  const real = r[10];
+  if (real) return `<a class="p-link" href="${esc(real)}" target="_blank" rel="noopener">Ver FISPQ/SDS ↗</a>`;
+  if (r[1]) {
+    const q = encodeURIComponent(`${r[0]} CAS ${r[1]} FISPQ SDS safety data sheet`);
+    return `<a class="p-link secondary" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Buscar FISPQ/SDS ↗</a>`;
+  }
+  return '';
+}
+
 function openDetail(r){
   const molarTxt = r[3] ? (r[3] + ' g/mol') : '';
   panelBody.innerHTML = `
     <img class="p-img" alt="" src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(r[1])}/PNG?image_size=300x300" onerror="this.style.display='none'">
     <p class="p-name">${esc(r[0])}</p>
-    ${r[8] ? `<span class="p-loc">${esc(sourceLabel(r[8]))}</span>` : ''}
+    ${r[8] ? `<span class="p-loc" style="background:${sourceColor(r[8])}22; color:${sourceColor(r[8])}">${srcDot(r[8])}${esc(sourceLabel(r[8]))}</span>` : ''}
+    <div style="margin:2px 0 14px;">${fispqLink(r)}</div>
     ${field('CAS', r[1], true)}
     ${field('Fórmula molecular', r[2], true)}
     ${field('Massa molar', molarTxt)}
